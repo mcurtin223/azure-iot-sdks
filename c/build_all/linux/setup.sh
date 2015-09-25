@@ -18,9 +18,28 @@ repo_name=$(repo_name_from_uri $repo)
 cred=~/cred.$$
 user=
 pass=
+quiet=0
 
 push_dir () { pushd $1 > /dev/null; }
 pop_dir () { popd $1 > /dev/null; }
+
+process_args ()
+{
+    while [[ $# > 0 ]]
+    do
+        key="$1"
+    
+        case $key in
+            -q|--quiet)
+            quiet=1
+            ;;
+            *)
+            # unknown option
+            ;;
+        esac
+        shift # past argument or value
+    done
+}
 
 repo_exists ()
 {
@@ -81,7 +100,12 @@ install_proton_from_source ()
         return 0
     fi
 
-    sudo bash c/build_all/linux/build_proton.sh --install /usr
+    if [ $quiet == 1 ]
+    then
+        sudo bash c/build_all/linux/build_proton.sh --install /usr --quiet
+    else
+        sudo bash c/build_all/linux/build_proton.sh --install /usr
+    fi
 }
 
 install_paho_from_source ()
@@ -94,7 +118,12 @@ install_paho_from_source ()
         return 0
     fi
 
-    sudo bash c/build_all/linux/build_paho.sh --install /usr
+    if [ $quiet == 1 ]
+    then
+        sudo bash c/build_all/linux/build_paho.sh --install /usr --quiet
+    else
+        sudo bash c/build_all/linux/build_paho.sh --install /usr
+    fi
 }
 
 if ! repo_exists
@@ -115,6 +144,7 @@ else
     creds_delete
 fi
 
+process_args $*
 install_proton_from_source
 install_paho_from_source
 pop_dir
