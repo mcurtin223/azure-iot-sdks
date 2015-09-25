@@ -4,6 +4,7 @@ set -e
 
 paho_repo="https://git.eclipse.org/r/paho/org.eclipse.paho.mqtt.c"
 build_root=
+quiet=0
 
 push_dir ()
 {
@@ -24,6 +25,7 @@ usage ()
     echo '                 (default: $HOME/org.eclipse.paho.mqtt.c)'
     echo ' -i, --install   destination root directory for paho installation'
     echo '                 (default: $HOME)'
+    echo ' -q, --quiet     no interactive prompts'
     exit 1
 }
 
@@ -32,26 +34,28 @@ process_args ()
     build_root="$HOME/org.eclipse.paho.mqtt.c"
     install_root="$HOME"
 
-    while [ ! -z "$1" ] && [ ! -z "$2" ]
+    while [[ $# > 0 ]]
     do
-        if [ "$1" == "-s" ] || [ "$1" == "--source" ]
-        then
+        key="$1"
+    
+        case $key in
+            -s|--source)
             build_root="$2"
-        elif [ "$1" == "-i" ] || [ "$1" == "--install" ]
-        then
-            install_root="$2" 
-        else
-            usage
-        fi
-
-        shift
-        shift
+            shift # past argument
+            ;;
+            -i|--install)
+            install_root="$2"
+            shift # past argument
+            ;;
+            -q|--quiet)
+            quiet=1
+            ;;
+            *)
+            usage # unknown option
+            ;;
+        esac
+        shift # past argument or value
     done
-
-    if [ ! -z "$1" ] && [ -z "$2" ]
-    then #odd number of arguments
-        usage
-    fi
 }
 
 sync_paho ()
@@ -59,7 +63,13 @@ sync_paho ()
     echo Azure IoT SDK has a dependency on eclipse paho mqtt c sdk
     echo http://www.eclipse.org/legal/CLA.php
 
-    read -p "Do you want to install the component (y/n)?" input_var
+    if [ $quiet == 0 ]
+    then
+        read -p "Do you want to install the component (y/n)?" input_var
+    else
+        input_var="y"
+    fi
+
     if [ "$input_var" == "y" ] || [ "$input_var" == "Y" ]
     then
         echo "preparing qpid proton-c"

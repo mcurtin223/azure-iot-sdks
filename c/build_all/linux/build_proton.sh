@@ -5,6 +5,7 @@ set -e
 proton_repo="https://github.com/dcristoloveanu/qpid-proton.git"
 proton_branch="0.9-IoTClient"
 build_root=
+quiet=0
 
 push_dir ()
 {
@@ -25,6 +26,7 @@ usage ()
     echo '                 (default: $HOME/qpid-proton)'
     echo ' -i, --install   destination root directory for proton installation'
     echo '                 (default: $HOME)'
+    echo ' -q, --quiet     no interactive prompts'
     exit 1
 }
 
@@ -33,26 +35,28 @@ process_args ()
     build_root="$HOME/qpid-proton"
     install_root="$HOME"
 
-    while [ ! -z "$1" ] && [ ! -z "$2" ]
+    while [[ $# > 0 ]]
     do
-        if [ "$1" == "-s" ] || [ "$1" == "--source" ]
-        then
+        key="$1"
+    
+        case $key in
+            -s|--source)
             build_root="$2"
-        elif [ "$1" == "-i" ] || [ "$1" == "--install" ]
-        then
-            install_root="$2" 
-        else
-            usage
-        fi
-
-        shift
-        shift
+            shift # past argument
+            ;;
+            -i|--install)
+            install_root="$2"
+            shift # past argument
+            ;;
+            -q|--quiet)
+            quiet=1
+            ;;
+            *)
+            usage # unknown option
+            ;;
+        esac
+        shift # past argument or value
     done
-
-    if [ ! -z "$1" ] && [ -z "$2" ]
-    then #odd number of arguments
-        usage
-    fi
 }
 
 sync_proton ()
@@ -60,7 +64,13 @@ sync_proton ()
     echo Azure IoT SDK has a dependency on apache qpid-proton-c
     echo https://github.com/apache/qpid-proton/blob/master/LICENSE
 
-    read -p "Do you want to install the component (y/n)?" input_var
+    if [ $quiet == 0 ]
+    then
+        read -p "Do you want to install the component (y/n)?" input_var
+    else
+        input_var="y"
+    fi
+    
     if [ "$input_var" == "y" ] || [ "$input_var" == "Y" ]
     then
         echo "preparing qpid proton-c"
