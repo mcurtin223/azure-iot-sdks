@@ -4,7 +4,7 @@ var fs = require('fs');
 var util = require('util');
 var _ = require('lodash');
 var argv = require('yargs')
-	.usage('Usage: node app.js -c [iot hub connection string] -e [event hub compatible endpoint] -p [partition count] -d [device id] -k [device key]')
+	.usage('Usage: node app.js -c [iot hub connection string] -e [event hub compatible endpoint] -p [partition count] -d [device id] -k [device key] -s [shared access signature]')
 	.demand(['c', 'e', 'p', 'd', 'k', 's'])
 	.alias('c', 'connection-string')
 	.alias('e', 'event-hub-endpoint')
