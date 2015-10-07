@@ -1,0 +1,13 @@
+FROM node:latest
+
+# add the sources to the image
+ADD . /usr/src/azure-iot-sdks
+
+# setup environment variables for e2e tests
+<<ENV_VARS>>
+
+# build node sdk
+RUN /usr/src/azure-iot-sdks/build/linux_node.sh
+
+# set working dir to root of repo
+WORKDIR /usr/src/azure-iot-sdks

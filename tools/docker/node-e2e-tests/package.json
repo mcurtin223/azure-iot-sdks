@@ -1,0 +1,15 @@
+{
+  "name": "node-e2e-tests",
+  "version": "1.0.0",
+  "description": "Generate Dockerfile for creating a docker image setup to run Node end-to-end tests.",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "lodash": "^3.10.1",
+    "yargs": "^3.26.0"
+  }
+}
