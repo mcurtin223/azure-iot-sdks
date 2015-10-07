@@ -89,6 +89,8 @@ function writeDockerfile(envMap) {
 		// write the env vars into the file
 		data = data.replace('<<ENV_VARS>>', env);
 		fs.writeFileSync('dockerfile-node-e2etests', data);
+		
+		console.log('Generated docker file here: dockerfile-node-e2etests');
 	});
 }
 
