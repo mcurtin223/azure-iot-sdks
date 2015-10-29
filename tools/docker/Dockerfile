@@ -14,7 +14,7 @@ WORKDIR /usr/src/azure-iot-sdks/c/build_all/linux
 RUN ["./setup.sh", "--quiet"]
 
 # build the iot sdks
-RUN ["./build.sh"]
+RUN ["./build.sh", "--skip-e2e-tests"]
 
 # set working dir to root of repo
 WORKDIR /usr/src/azure-iot-sdks
