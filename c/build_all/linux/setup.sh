@@ -3,21 +3,15 @@
 #This script updates a fresh Ubuntu installation with all the dependent
 # components necessary to use the IoT Client SDK for C.
 
-#Make sure temporary Git credentials file is ALWAYS deleted
-trap 'creds_delete' EXIT
-
 repo_name_from_uri()
 {
     echo "$1" | sed -e 's|/$||' -e 's|:*/*\.git$||' -e 's|.*[/:]||g'
 }
 
 scriptdir=$(cd "$(dirname "$0")" && pwd)
-deps="curl libcurl4-openssl-dev uuid-dev uuid g++ make cmake git"
+deps="curl libcurl4-openssl-dev uuid-dev uuid g++ make cmake git unzip openjdk-7-jre libssl-dev"
 repo="https://github.com/Azure/azure-iot-sdks.git"
 repo_name=$(repo_name_from_uri $repo)
-cred=~/cred.$$
-user=
-pass=
 quiet=0
 
 push_dir () { pushd $1 > /dev/null; }
@@ -51,34 +45,6 @@ repo_exists ()
     pop_dir
 }
 
-creds_read ()
-{
-    echo "Enter credentials for $repo:"
-    read -p "username: " user
-    read -p "password (or access token, for 2FA): " -s pass
-    echo -e "\n"
-}
-
-creds_create ()
-{
-    protocol=$(expr "$repo" : '\(.*\):\/\/.*')
-    host=$(expr "$repo" : '.*:\/\/\([^/]*\)/.*')
-
-    #NOTE: tabs in the heredoc are intentional; don't replace them with spaces
-    git credential-store --file $cred store <<-end-credentials
-	protocol=$protocol
-	host=$host
-	username=$user
-	password=$pass
-	
-	end-credentials
-}
-
-creds_delete ()
-{
-    rm -f $cred
-}
-
 deps_install ()
 {
     sudo apt-get update
@@ -87,7 +53,7 @@ deps_install ()
 
 clone_source ()
 {
-    git -c credential.helper="store --file $cred" -c core.askpass=true clone $repo
+    git clone $repo
 }
 
 install_proton_from_source ()
@@ -106,6 +72,7 @@ install_proton_from_source ()
     else
         sudo bash c/build_all/linux/build_proton.sh --install /usr
     fi
+    [ $? -eq 0 ] || return $?
 }
 
 install_paho_from_source ()
@@ -124,12 +91,8 @@ install_paho_from_source ()
     else
         sudo bash c/build_all/linux/build_paho.sh --install /usr
     fi
+    [ $? -eq 0 ] || return $?
 }
-
-if ! repo_exists
-then
-    creds_read #read Git credentials up front, so script can be unattended-ish
-fi
 
 deps_install
 
@@ -138,13 +101,11 @@ then
     echo "Repo $repo_name already cloned"
     push_dir "$(git rev-parse --show-toplevel)"
 else
-    creds_create
     clone_source || exit 1
     push_dir "$repo_name"
-    creds_delete
 fi
 
 process_args $*
-install_proton_from_source
-install_paho_from_source
+install_proton_from_source || exit 1
+install_paho_from_source || exit 1
 pop_dir

@@ -14,7 +14,7 @@ Devices and data sources in an IoT solution can range from a simple network-conn
 This repository contains the following IoT device SDKs:
 
 - [Azure IoT device SDK for C](c/readme.md)
-- [Azure IoT device SDK for .NET](csharp/readme.md)
+- [Azure IoT device SDK for .NET](csharp/device/readme.md)
 - [Azure IoT device SDK for Java](java/device/readme.md)
 - [Azure IoT device SDK for Node.js](node/device/readme.md)
 
@@ -44,7 +44,7 @@ This folder contains the following documents that are relevant to all the langua
 
 - [Set up IoT Hub](doc/setup_iothub.md) describes how to configure your Azure IoT Hub service.
 - [FAQ](doc/faq.md) contains frequently asked questions about the SDKs and libraries.
-- [OS Platforms and hardware compatibility](doc\tested_configurations.md) describes the SDK compatibility with different OS platforms as well as specific device configurations.
+- [OS Platforms and hardware compatibility](doc/tested_configurations.md) describes the SDK compatibility with different OS platforms as well as specific device configurations.
 
 ### /tools
 

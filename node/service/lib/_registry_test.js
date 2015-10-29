@@ -9,12 +9,10 @@ var Device = require('./device.js');
 var Registry = require('./registry.js');
 var SimulatedHttps = require('azure-iot-common').SimulatedHttps;
 
-var deviceJson = JSON.stringify(
-  {
-     deviceId: 'testDevice',
-     status: 'Disabled'
-  }
-);
+var deviceJson = JSON.stringify({
+  deviceId: 'testDevice' + Math.random(),
+  status: 'Disabled'
+});
 
 function badConfigTests(opName, badConnStrings, transportFactory, requestFn) {
 
@@ -47,7 +45,7 @@ function badConfigTests(opName, badConnStrings, transportFactory, requestFn) {
     { name: 'key is wrong', expect: expect401Response }
   ];
 
-  badConnStrings.forEach(function (test, index, array) {
+  badConnStrings.forEach(function (test, index) {
     it('fails to ' + opName + ' when the ' + tests[index].name, function (done) {
       makeRequestWith(test, tests[index].expect, done);
     });
@@ -69,8 +67,7 @@ function runTests(transportFactory, goodConfig, badConfigs, deviceId) {
         var registry = new Registry(goodConfig, transportFactory());
         var deviceInfo = new Device(null);
         assert.throws(function() {
-          registry.create(deviceInfo, function(err, response) {
-          });
+          registry.create(deviceInfo, function () {});
         }, ReferenceError, 'Invalid argument \'deviceId\'');
         done();
       });
@@ -155,14 +152,13 @@ function runTests(transportFactory, goodConfig, badConfigs, deviceId) {
         var registry = new Registry(goodConfig, transportFactory());
         var deviceInfo = new Device(null);
         assert.throws(function() {
-          registry.update(deviceInfo, function(err, response) {
-          });
+          registry.update(deviceInfo, function () {});
         }, ReferenceError, 'Invalid argument \'deviceId\'');
         done();
       });
 
       /*Test_SRS_NODE_IOTHUB_REGISTRY_07_004: [When the update method completes, the callback function (indicated by the done argument) shall be invoked with the same arguments as the underlying transport method’s callback, plus a Device object representing the updated device information created from IoT Hub.]*/
-      it('updates information about a devices', function(done) {
+      it('updates information about a device', function(done) {
         var registry = new Registry(goodConfig, transportFactory());
         var device = new Device(deviceJson);
         registry.update(device, function(err, response, dev) {
@@ -188,10 +184,10 @@ function runTests(transportFactory, goodConfig, badConfigs, deviceId) {
       Host: <config.host>
       ]*/
       /*Tests_SRS_NODE_IOTHUB_REGISTRY_07_007: [The delete method shall throw a ReferenceError if the supplied deviceId is not valid. When the delete method completes, the callback function (indicated by the done argument) shall be invoked with the same arguments as the underlying transport method’s callback] */
-      it('deletes device if its available', function(done) {
+      it('deletes the given device', function(done) {
         var registry = new Registry(goodConfig, transportFactory());
         var deviceInfo = new Device(deviceJson);
-        registry.delete(deviceInfo.deviceId, function(err, response) {
+        registry.delete(deviceInfo.deviceId, function(err) {
           assert.isNull(err);
           done();
         });
