@@ -20,6 +20,7 @@
 /*String containing Hostname, Device Id & Device Key in the format:             */
 /*  "HostName=<host_name>;DeviceId=<device_id>;SharedAccessKey=<device_key>"    */
 /************ First variable to assign for BBG Azure **************/
+/****** Need to create IOT device within Azure and assign device key here   ****/
 static const char* connectionString = "[device connection string]";
 
 // Define the Model
