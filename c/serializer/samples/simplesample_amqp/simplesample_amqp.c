@@ -19,6 +19,7 @@
 
 /*String containing Hostname, Device Id & Device Key in the format:             */
 /*  "HostName=<host_name>;DeviceId=<device_id>;SharedAccessKey=<device_key>"    */
+/************ First variable to assign for BBG Azure **************/
 static const char* connectionString = "[device connection string]";
 
 // Define the Model
